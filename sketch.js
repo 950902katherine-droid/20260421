@@ -68,7 +68,25 @@ function draw() {
     push();
     translate(x + videoW, y); // 移至右上角準備翻轉
     scale(-1, 1);             // 水平翻轉
-    image(capture, 0, 0, videoW, videoH); // 底層：攝影機畫面
+
+    // 製作馬賽克黑白效果
+    let unitSize = 10; // 將單位尺寸改小，使格子更細緻
+    let numCols = capture.width / unitSize;
+    let numRows = capture.height / unitSize;
+    let blockW = videoW / numCols;
+    let blockH = videoH / numRows;
+
+    for (let iy = 0; iy < numRows; iy++) {
+      for (let ix = 0; ix < numCols; ix++) {
+        // 取得每個單位的色彩值 (取該單位左上角的像素作為代表)
+        let c = capture.get(ix * unitSize, iy * unitSize);
+        let gray = (c[0] + c[1] + c[2]) / 3; // 依照需求計算 (R+G+B)/3
+        fill(gray);
+        noStroke();
+        rect(ix * blockW, iy * blockH, blockW, blockH);
+      }
+    }
+
     image(pg, 0, 0, videoW, videoH);      // 上層：Graphics 內容
     pop();
   }
