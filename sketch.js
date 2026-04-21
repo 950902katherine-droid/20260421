@@ -1,6 +1,7 @@
 let capture;
 let pg;
 let bubbles = [];
+let btn;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -8,6 +9,11 @@ function setup() {
   capture = createCapture(VIDEO);
   // 隱藏預設產生的 HTML 影片元件
   capture.hide();
+
+  // 產生擷圖按鈕
+  btn = createButton('擷取畫面 (JPG)');
+  updateButtonPosition();
+  btn.mousePressed(saveSnapshot);
 }
 
 function draw() {
@@ -68,6 +74,27 @@ function draw() {
   }
 }
 
+function saveSnapshot() {
+  // 重新計算目前的擷取範圍（與畫面上顯示的 60% 區域一致）
+  let videoW = width * 0.6;
+  let videoH = height * 0.6;
+  let x = (width - videoW) / 2;
+  let y = (height - videoH) / 2;
+
+  // 從畫布中擷取該區塊
+  let img = get(x, y, videoW, videoH);
+  // 儲存為 jpg 圖檔
+  img.save('my_snapshot', 'jpg');
+}
+
+function updateButtonPosition() {
+  // 將按鈕放置在視訊畫面正下方
+  let videoH = height * 0.6;
+  let y = (height - videoH) / 2;
+  btn.position(width / 2 - btn.width / 2, y + videoH + 20);
+}
+
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+  updateButtonPosition();
 }
