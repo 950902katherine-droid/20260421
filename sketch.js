@@ -1,5 +1,6 @@
 let capture;
 let pg;
+let bubbles = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -26,10 +27,36 @@ function draw() {
 
   if (pg) {
     // 在 pg 繪圖層上繪製內容（範例：在中間畫一個圓與文字）
-    pg.clear(); // 清除上一幀，保持透明背景
-    pg.fill(255, 255, 0, 150); // 半透明黃色
-    pg.noStroke();
-    pg.ellipse(pg.width / 2, pg.height / 2, 100);
+    pg.clear(); 
+
+    // 產生新泡泡
+    if (frameCount % 5 === 0) {
+      bubbles.push({
+        x: random(pg.width),
+        y: pg.height + 20,
+        r: random(5, 15),
+        speed: random(1, 3),
+        offset: random(TWO_PI)
+      });
+    }
+
+    // 更新並繪製泡泡
+    pg.noFill();
+    pg.stroke(255, 180);
+    pg.strokeWeight(1.5);
+
+    for (let i = bubbles.length - 1; i >= 0; i--) {
+      let b = bubbles[i];
+      b.y -= b.speed;
+      b.x += sin(frameCount * 0.05 + b.offset) * 0.5; // 左右搖擺
+      
+      pg.circle(b.x, b.y, b.r);
+
+      // 移除超出畫面的泡泡
+      if (b.y < -20) {
+        bubbles.splice(i, 1);
+      }
+    }
 
     // 繪製影像與疊加層
     push();
