@@ -18,7 +18,12 @@ function draw() {
   let x = (width - videoW) / 2;
   let y = (height - videoH) / 2;
 
-  image(capture, x, y, videoW, videoH);
+  // 修正左右顛倒：使用 push/pop 進行水平翻轉
+  push();
+  translate(x + videoW, y); // 將原點移至影像右上角
+  scale(-1, 1);             // 水平翻轉
+  image(capture, 0, 0, videoW, videoH);
+  pop();
 }
 
 function windowResized() {
